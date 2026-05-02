@@ -104,10 +104,21 @@
 </section>
 </main>
 <footer class="footer"><div class="container"><div class="footer-bottom"><span>© 2024 Diya Pharma. All rights reserved.</span></div></div></footer>
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
-<script src="js/products.js"></script>
-<script src="js/app.js"></script>
+<script>
+// AUTH GUARD — runs BEFORE any other scripts
+(function() {
+  var user = JSON.parse(localStorage.getItem('dp_user') || 'null');
+  if (!user) {
+    alert('Please login to continue to checkout');
+    window.location.href = 'login.html';
+    document.write('<h2 style="text-align:center;padding:60px">Redirecting to login...</h2>');
+  }
+})();
+</script>
+<script src="js/config.js?v=4"></script>
+<script src="js/api.js?v=4"></script>
+<script src="js/products.js?v=4"></script>
+<script src="js/app.js?v=4"></script>
 <script>
 function renderSummary() {
   const s = DiyaPharma.getCartTotal();
@@ -120,7 +131,7 @@ function renderSummary() {
         <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--neutral-100)">
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="width:40px;height:40px;background:#f8f9fc;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--neutral-200)">
-              ${i.img ? `<img src="${i.img}" style="width:100%;height:100%;object-fit:contain;">` : '💊'}
+              <img src="${i.img || 'images/meds/tablet.png'}" style="width:100%;height:100%;object-fit:contain;" onerror="this.outerHTML='💊'">
             </div>
             <span>${i.name} × ${i.qty}</span>
           </div>
@@ -165,7 +176,6 @@ async function placeOrder() {
   const total = subtotal + gst + shipping;
 
   try {
-    // Save to database via API
     const user = DiyaPharma.user;
     const response = await fetch(`${CONFIG.API_BASE_URL}/orders`, {
       method: 'POST',
@@ -181,7 +191,6 @@ async function placeOrder() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Order failed');
 
-    // Clear cart
     DiyaPharma.cart = [];
     DiyaPharma.saveCart();
 
@@ -190,7 +199,6 @@ async function placeOrder() {
     document.getElementById('orderSummary').style.display = 'none';
     showToast('Order placed successfully!', 'success');
   } catch (error) {
-    // Fallback: save locally if API fails
     const order = DiyaPharma.placeOrder(addr, payment);
     document.getElementById('orderId').textContent = 'Order ID: #' + order.id;
     goToStep(3);
@@ -226,13 +234,6 @@ async function loadRecommendations() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Auth Guard
-  if (!DiyaPharma.user) {
-    showToast('Please login to continue to checkout', 'info');
-    setTimeout(() => { window.location.href = 'login.html?redirect=checkout.html'; }, 1500);
-    return;
-  }
-
   if (DiyaPharma.cart.length === 0) { window.location.href = 'cart.html'; return; }
   renderSummary();
   loadRecommendations();

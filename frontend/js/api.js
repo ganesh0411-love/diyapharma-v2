@@ -59,19 +59,37 @@ const API = {
    * Login a user
    */
   async login(email, password) {
+    // Try backend first
+    let backendReachable = false;
     try {
       const response = await fetch(`${CONFIG.API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
+      backendReachable = true;
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Login failed');
+      if (!response.ok) {
+        // Backend responded with an auth error — translate it
+        const msg = (data.error || '').toLowerCase();
+        if (msg.includes('invalid login') || msg.includes('invalid email') || msg.includes('credentials')) {
+          throw new Error('Wrong Password. Please try again.');
+        }
+        if (msg.includes('not found') || msg.includes('no user') || msg.includes('not registered')) {
+          throw new Error('Account not registered. Please sign up first.');
+        }
+        throw new Error(data.error || 'Login failed');
+      }
       return data;
     } catch (error) {
-      console.warn('Backend unavailable, using Local Simulation for Login', error);
+      // If backend was reachable and returned an error, throw it directly
+      if (backendReachable) {
+        throw error;
+      }
+
+      console.warn('Backend unreachable, using Local Simulation for Login');
       
-      // Local Database Simulation
+      // Local Database Simulation (only when backend is truly offline)
       let mockUsers = JSON.parse(localStorage.getItem('mock_db_users') || '[]');
       
       const searchEmail = (email || '').toLowerCase();

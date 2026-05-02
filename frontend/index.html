@@ -117,9 +117,10 @@
 <section class="about-snippet">
   <div class="container">
     <div class="about-grid">
-      <div class="about-image fade-in-left">
-        <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg);">
-          <source src="https://player.vimeo.com/external/494252666.hd.mp4?s=2f5c76cc7000d110f019a3b683d73507851b32d2&profile_id=175" type="video/mp4">
+      <div class="about-image fade-in-left" style="overflow:hidden;position:relative;">
+        <video autoplay muted loop playsinline preload="auto" style="width:100%; height:100%; object-fit:cover; border-radius:var(--radius-lg);">
+          <source src="https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4" type="video/mp4">
+          <source src="https://videos.pexels.com/video-files/3195394/3195394-hd_1920_1080_25fps.mp4" type="video/mp4">
         </video>
       </div>
       <div class="about-text fade-in-right">
@@ -275,6 +276,8 @@
     <div class="quote-body" id="quoteSelectionView">
       <div class="quote-selection-header">
         <input type="text" class="quote-search" id="quoteSearch" placeholder="Search medicines by name or composition..." oninput="filterQuoteProducts(this.value)">
+        <button class="btn btn-sm btn-primary" onclick="selectAllProducts()" style="white-space:nowrap">Select All</button>
+        <button class="btn btn-sm btn-secondary" onclick="clearAllProducts()" style="white-space:nowrap">Clear All</button>
       </div>
       <div class="quote-product-list" id="quoteProductList">
         <!-- Populated by JS -->
@@ -303,7 +306,9 @@
               <th>Product Name</th>
               <th>Composition</th>
               <th>Packing</th>
-              <th style="text-align:right">MRP (Incl. Tax)</th>
+              <th style="text-align:center">Qty</th>
+              <th style="text-align:right">Unit Price</th>
+              <th style="text-align:right">Total</th>
             </tr>
           </thead>
           <tbody id="invoiceTableBody">
@@ -312,8 +317,8 @@
         </table>
         
         <div class="invoice-totals">
-          <div class="total-row"><span>Subtotal (Base)</span><span id="quoteSubtotal">₹0.00</span></div>
-          <div class="total-row"><span>Estimated Tax (12% GST)</span><span id="quoteTax">₹0.00</span></div>
+          <div class="total-row"><span>Subtotal</span><span id="quoteSubtotal">₹0.00</span></div>
+          <div class="total-row"><span>GST (12%)</span><span id="quoteTax">₹0.00</span></div>
           <div class="total-row grand-total"><span>Grand Total</span><span id="quoteGrandTotal">₹0.00</span></div>
         </div>
         <div style="clear:both"></div>
@@ -327,8 +332,8 @@
         <button class="btn btn-primary" id="btnGenerateQuote" disabled onclick="generateQuotation()">Generate Quotation</button>
       </div>
       <div id="invoiceActions" class="hidden">
-        <button class="btn btn-secondary" onclick="backToSelection()">Back to Selection</button>
-        <button class="btn btn-accent" onclick="downloadQuotationPDF()">Download PDF</button>
+        <button class="btn btn-secondary" onclick="backToSelection()">← Back to Selection</button>
+        <button class="btn btn-accent" onclick="viewAndDownloadPDF()">📄 View / Download PDF</button>
       </div>
     </div>
   </div>
@@ -336,12 +341,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-<script src="js/config.js?v=3"></script>
-<script src="js/api.js?v=3"></script>
-<script src="js/products.js?v=3"></script>
-<script src="js/app.js?v=3"></script>
-<script src="js/ui.js?v=3"></script>
-<script src="js/quote.js"></script>
+<script src="js/config.js?v=4"></script>
+<script src="js/api.js?v=4"></script>
+<script src="js/products.js?v=4"></script>
+<script src="js/app.js?v=4"></script>
+<script src="js/ui.js?v=4"></script>
+<script src="js/quote.js?v=4"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   // Populate divisions grid from database with logos
