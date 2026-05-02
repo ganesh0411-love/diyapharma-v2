@@ -19,8 +19,8 @@ function closeQuoteModal() {
 function renderQuoteProductList(products) {
     const list = document.getElementById('quoteProductList');
     list.innerHTML = products.map(p => `
-        <div class="quote-product-item ${selectedProducts.has(p.id) ? 'selected' : ''}" onclick="toggleProductSelection(${p.id}, this)">
-            <input type="checkbox" ${selectedProducts.has(p.id) ? 'checked' : ''} onclick="event.stopPropagation()">
+        <div class="quote-product-item ${selectedProducts.has(p.id) ? 'selected' : ''}" onclick="toggleProductSelection(${p.id}, this, event)">
+            <input type="checkbox" ${selectedProducts.has(p.id) ? 'checked' : ''} onchange="handleCheckboxChange(${p.id}, this)">
             <div class="quote-product-info">
                 <h4>${p.name}</h4>
                 <p>${p.composition}</p>
@@ -39,18 +39,25 @@ function filterQuoteProducts(query) {
     renderQuoteProductList(filtered);
 }
 
-function toggleProductSelection(id, element) {
-    if (selectedProducts.has(id)) {
-        selectedProducts.delete(id);
-        element.classList.remove('selected');
-        element.querySelector('input').checked = false;
-    } else {
+function handleCheckboxChange(id, checkbox) {
+    const item = checkbox.closest('.quote-product-item');
+    if (checkbox.checked) {
         selectedProducts.add(id);
-        element.classList.add('selected');
-        element.querySelector('input').checked = true;
+        item.classList.add('selected');
+    } else {
+        selectedProducts.delete(id);
+        item.classList.remove('selected');
     }
-    
     updateSelectionUI();
+}
+
+function toggleProductSelection(id, element, event) {
+    const checkbox = element.querySelector('input[type="checkbox"]');
+    // If we didn't click the checkbox itself, toggle it
+    if (event.target !== checkbox) {
+        checkbox.checked = !checkbox.checked;
+        handleCheckboxChange(id, checkbox);
+    }
 }
 
 function updateSelectionUI() {
