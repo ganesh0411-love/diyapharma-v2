@@ -163,17 +163,17 @@ function updateNavState() {
       mobileNav.insertBefore(dashLink, mobileNav.lastElementChild);
     }
 
-    // 2. Change Login button to Username in nav-actions
+    // 2. Change Login button to Avatar in nav-actions
     const navActions = document.querySelector('.nav-actions');
     if (navActions) {
       const loginBtn = navActions.querySelector('a[href="login.html"]');
       if (loginBtn) {
-        // Safe name fallback
-        const displayName = (user.name || user.email || 'User').split(' ')[0];
+        // First letter of name or email
+        const firstLetter = (user.name || user.email || 'U').charAt(0).toUpperCase();
         
-        // Replace the button with a user profile pill
-        loginBtn.outerHTML = `<a href="${dashboardHref}" class="btn btn-sm btn-secondary" style="background:var(--primary-50); color:var(--primary-700); border-color:var(--primary-200); display:flex; align-items:center; gap:6px; padding:6px 12px;">
-          <span style="font-size:16px;">👤</span> ${displayName}
+        // Replace the button with a circular avatar
+        loginBtn.outerHTML = `<a href="${dashboardHref}" class="nav-avatar" title="Dashboard" style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-600); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; text-decoration: none; font-size: 14px; flex-shrink: 0;">
+          ${firstLetter}
         </a>`;
       }
     }
