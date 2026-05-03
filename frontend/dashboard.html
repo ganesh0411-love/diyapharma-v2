@@ -79,13 +79,18 @@
 </section>
 </main>
 <footer class="footer"><div class="container"><div class="footer-bottom"><span>© 2024 Diya Pharma. All rights reserved.</span></div></div></footer>
-<script src="js/products.js"></script>
-<script src="js/app.js"></script>
+<script src="js/products.js?v=4"></script>
+<script src="js/app.js?v=4"></script>
 <script>
 function showPanel(name, link) {
   document.querySelectorAll('[id^="panel-"]').forEach(p => p.classList.add('hidden'));
   document.getElementById('panel-' + name).classList.remove('hidden');
   if (link) { document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active')); link.classList.add('active'); }
+  // On mobile, scroll to the content panel so user sees it immediately
+  var content = document.querySelector('.dash-content');
+  if (content && window.innerWidth <= 768) {
+    content.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
   return false;
 }
 document.addEventListener('DOMContentLoaded', () => {
